@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Conex</title>
+<style>
+  /* Reset */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #000814; /* negro azulado */
+    color: #a1caff; /* azul claro */
+  }
+
+  /* Contenedor login/registro */
+  #login-register-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    background: linear-gradient(135deg, #001f3f 0%, #000814 100%);
+  }
+  #login-register-container h2 {
+    color: #3399ff;
+    margin-bottom: 20px;
+    text-shadow: 0 0 8px #33a1ff;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    width: 320px;
+    gap: 15px;
+    background: #001a3d;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px #3377ff88;
+  }
+  input {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1.5px solid #3399ff;
+    background: #001a3d;
+    color: #a1caff;
+    font-size: 17px;
+    transition: border-color 0.3s ease;
+  }
+  input:focus {
+    border-color: #66bbff;
+    outline: none;
+  }
+  button {
+    cursor: pointer;
+    padding: 12px;
+    font-weight: 700;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(90deg, #0066ff, #3399ff);
+    color: white;
+    font-size: 18px;
+    box-shadow: 0 0 12px #3399ffcc;
+    transition: background 0.4s ease;
+  }
+  button:hover {
+    background: linear-gradient(90deg, #3399ff, #66bbff);
+  }
+  #toggle-login-btn {
+    margin-top: 20px;
+    background: transparent;
+    color: #66bbff;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+  }
+  #toggle-login-btn:hover {
+    color: #99d1ff;
+  }
+  #error-msg {
+    min-height: 24px;
+    font-weight: 700;
+    text-align: center;
+    color: #ff6666;
+    margin-top: 8px;
+  }
+  #captcha-display {
+    user-select: none;
+    background: #003060;
+    text-align: center;
+    padding: 10px 0;
+    font-weight: 900;
+    letter-spacing: 6px;
+    font-size: 30px;
+    border-radius: 10px;
+    color: #66bbff;
+    box-shadow: 0 0 15px #3399ff88;
+  }
+
+  /* Panel Principal */
+  #panel-container {
+    display: none;
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    background: #001120;
+    color: #a1caff;
+  }
+
+  /* Sidebar */
+  #sidebar {
+    width: 220px;
+    background: linear-gradient(180deg, #000b20 0%, #001a3d 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px 15px;
+    box-shadow: 3px 0 10px #0055ff88;
+  }
+  #sidebar button {
+    background: #003060;
+    border: none;
+    color: #a1caff;
+    padding: 15px 18px;
+    cursor: pointer;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 18px;
+    text-align: left;
+    box-shadow: 0 0 6px #3399ff99;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  #sidebar button.active,
+  #sidebar button:hover {
+    background: #3399ff;
+    color: #001120;
+    box-shadow: 0 0 18px #66bbff;
+  }
+
+  /* Sections */
+  .section {
+    flex-grow: 1;
+    padding: 30px 40px;
+    display: none;
+    overflow-y: auto;
+  }
+  .section.active {
+    display: block;
+  }
+
+  /* Lobby */
+  #welcome-message {
+    font-size: 28px;
+    font-weight: 900;
+    color: #66bbff;
+    text-shadow: 0 0 15px #3399ff;
+  }
+
+  /* Chatbot */
+  #chatbot-section h2 {
+    font-size: 28px;
+    font-weight: 900;
+    color: #66bbff;
+    text-shadow: 0 0 12px #3399ff;
+    margin-bottom: 15px;
+  }
+  #chat-window {
+    background:#00203a; 
+    height: 350px; 
+    overflow-y: auto; 
+    padding: 15px; 
+    margin-bottom: 15px; 
+    border-radius: 12px;
+    font-size: 20px;
+    box-shadow: inset 0 0 12px #0055ffaa;
+    color: #cce7ff;
+  }
+  #chat-input {
+    width: 78%; 
+    padding: 14px; 
+    border-radius: 10px; 
+    border: 1.5px solid #3399ff; 
+    font-size: 18px;
+    background: #001a3d;
+    color: #a1caff;
+  }
+  #chat-input:focus {
+    outline: none;
+    border-color: #66bbff;
+  }
+  #send-btn {
+    width: 20%; 
+    margin-left: 2%; 
+    padding: 14px; 
+    font-weight: 900; 
+    border-radius: 10px; 
+    border: none; 
+    background: linear-gradient(90deg, #3399ff, #66bbff);
+    color: white;
+    font-size: 18px;
+    box-shadow: 0 0 15px #66bbffcc;
+    cursor: pointer;
+    transition: background 0.4s ease;
+  }
+  #send-btn:hover {
+    background: linear-gradient(90deg, #66bbff, #3399ff);
+  }
+  /* Chatbot messages */
+  #chat-window div {
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+  }
+  #chat-window div.sender {
+    background: #004080;
+    color: #b0d8ff;
+    font-weight: 700;
+  }
+  #chat-window div.fox {
+    background: #3366ff;
+    color: #dceeff;
+    font-weight: 900;
+    box-shadow: 0 0 8px #3399ff;
+  }
+
+  /* Configuración */
+  #config-section h2 {
+    font-size: 26px;
+    font-weight: 900;
+    color: #66bbff;
+    margin-bottom: 20px;
+    text-shadow: 0 0 8px #3399ff;
+  }
+  #config-section p {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  /* Santo Cord */
+  #santo-section h2 {
+    color: #3399ff;
+    font-weight: 900;
+    font-size: 28px;
+    text-shadow: 0 0 12px #3399ff;
+    margin-bottom: 15px;
+  }
+  #santo-section p {
+    font-size: 18px;
+    color: #a1caff;
+    margin-bottom: 10px;
+  }
+  #santo-section a {
+    color: #66bbff; 
+    text-decoration: underline; 
+    font-weight: 700;
+    font-size: 18px;
+    transition: color 0.3s ease;
+  }
+  #santo-section a:hover {
+    color: #99d1ff;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Login y Registro -->
+  <div id="login-register-container">
+    <h2 id="form-title">Login</h2>
+    <form id="auth-form" autocomplete="off">
+      <input type="text" id="username" placeholder="Usuario" required />
+      <input type="password" id="password" placeholder="Contraseña" required />
+      <div id="captcha-display"></div>
+      <input type="text" id="captcha-input" placeholder="Escribe el captcha" required />
+      <button type="submit" id="submit-btn">Ingresar</button>
+    </form>
+    <button id="toggle-login-btn">¿No tienes cuenta? Regístrate</button>
+    <div id="error-msg"></div>
+  </div>
+
+  <!-- Panel Principal -->
+  <div id="panel-container">
+    <div id="sidebar">
+      <button id="menu-lobby" class="active">Lobby</button>
+      <button id="menu-chatbot">Chatbot Fox</button>
+      <button id="menu-config">Configuración</button>
+      <button id="menu-santo">Santo Cord</button>
+    </div>
+
+    <div id="lobby-section" class="section active">
+      <h2 id="welcome-message">Bienvenido!</h2>
+      <p>Esta es la página de inicio.</p>
+    </div>
+
+    <div id="chatbot-section" class="section">
+      <h2>Chatbot Fox</h2>
+      <div id="chat-window"></div>
+      <input id="chat-input" placeholder="Escribe tu mensaje..." />
+      <button id="send-btn">Enviar</button>
+    </div>
+
+    <div id="config-section" class="section">
+      <h2>Configuración</h2>
+      <p>Usuario: <span id="config-username"></span></p>
+      <p>Contraseña: <span id="config-password"></span></p>
+    </div>
+
+    <div id="santo-section" class="section">
+      <h2>Santo Cord</h2>
+      <p>Owner: <strong>Santo Cord</strong></p>
+      <p>
+        github: 
+        <a href="https://github.com/Santo-CORD" target="_blank" rel="noopener noreferrer">
+          https://github.com/Santo-CORD
+        </a>
+      </p>
+    </div>
+  </div>
+
+<script>
+  // Referencias
+  const loginRegisterContainer = document.getElementById('login-register-container');
+  const panelContainer = document.getElementById('panel-container');
+
+  const authForm = document.getElementById('auth-form');
+  const usernameInput = document.getElementById('username');
+  const passwordInput = document.getElementById('password');
+  const captchaDisplay = document.getElementById('captcha-display');
+  const captchaInput = document.getElementById('captcha-input');
+  const errorMsg = document.getElementById('error-msg');
+  const toggleLoginBtn = document.getElementById('toggle-login-btn');
+  const formTitle = document.getElementById('form-title');
+  const submitBtn = document.getElementById('submit-btn');
+
+  // Panel elementos y menú
+  const menuLobbyBtn = document.getElementById('menu-lobby');
+  const menuChatbotBtn = document.getElementById('menu-chatbot');
+  const menuConfigBtn = document.getElementById('menu-config');
+  const menuSantoBtn = document.getElementById('menu-santo');
+
+  const lobbySection = document.getElementById('lobby-section');
+  const chatbotSection = document.getElementById('chatbot-section');
+  const configSection = document.getElementById('config-section');
+  const santoSection = document.getElementById('santo-section');
+
+  const configUsernameSpan = document.getElementById('config-username');
+  const configPasswordSpan = document.getElementById('config-password');
+
+  // Chatbot elementos
+  const chatWindow = document.getElementById('chat-window');
+  const chatInput = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('send-btn');
+
+  let isLoginMode = true; // true: login, false: registro
+  let currentCaptcha = '';
+  let users = JSON.parse(localStorage.getItem('users') || '{}');
+  let loggedUser = null;
+
+  // Generar captcha (5 números)
+  function generateCaptcha() {
+    let captcha = '';
+    for(let i=0; i<5; i++) {
+      captcha += Math.floor(Math.random() * 10);
+    }
+    return captcha;
+  }
+
+  // Mostrar nuevo captcha
+  function refreshCaptcha() {
+    currentCaptcha = generateCaptcha();
+    captchaDisplay.textContent = currentCaptcha;
+    captchaInput.value = '';
+  }
+  refreshCaptcha();
+
+  // Cambiar entre login y registro
+  toggleLoginBtn.addEventListener('click', () => {
+    isLoginMode = !isLoginMode;
+    if(isLoginMode) {
+      formTitle.textContent = 'Login';
+      submitBtn.textContent = 'Ingresar';
+      toggleLoginBtn.textContent = '¿No tienes cuenta? Regístrate';
+    } else {
+      formTitle.textContent = 'Registro';
+      submitBtn.textContent = 'Registrar';
+      toggleLoginBtn.textContent = '¿Ya tienes cuenta? Inicia sesión';
+    }
+    errorMsg.textContent = '';
+    errorMsg.style.color = '#ff6666';
+    refreshCaptcha();
+  });
+
+  // Validar formulario
+  authForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
+    const captchaVal = captchaInput.value.trim();
+
+    if(captchaVal !== currentCaptcha) {
+      errorMsg.textContent = 'Captcha incorrecto. Intenta de nuevo.';
+      refreshCaptcha();
+      return;
+    }
+    if(username === '' || password === '') {
+      errorMsg.textContent = 'Usuario y contraseña son obligatorios.';
+      return;
+    }
+
+    if(isLoginMode) {
+      // Login
+      if(users[username] && users[username] === password) {
+        loggedUser = username;
+        errorMsg.textContent = '';
+        showPanel();
+      } else {
+        errorMsg.textContent = 'Usuario o contraseña incorrectos.';
+        refreshCaptcha();
+      }
+    } else {
+      // Registro
+      if(users[username]) {
+        errorMsg.textContent = 'El usuario ya existe.';
+        refreshCaptcha();
+      } else {
+        users[username] = password;
+        localStorage.setItem('users', JSON.stringify(users));
+        errorMsg.style.color = '#77dd77';
+        errorMsg.textContent = 'Registro exitoso. Ahora inicia sesión.';
+        isLoginMode = true;
+        formTitle.textContent = 'Login';
+        submitBtn.textContent = 'Ingresar';
+        toggleLoginBtn.textContent = '¿No tienes cuenta? Regístrate';
+        refreshCaptcha();
+        setTimeout(() => {
+          errorMsg.textContent = '';
+          errorMsg.style.color = '#ff6666';
+        }, 4000);
+      }
+    }
+  });
+
+  // Mostrar panel después login
+  function showPanel() {
+    loginRegisterContainer.style.display = 'none';
+    panelContainer.style.display = 'flex';
+    showSection('lobby');
+    configUsernameSpan.textContent = loggedUser;
+    configPasswordSpan.textContent = '*'.repeat(users[loggedUser].length);
+    document.getElementById('welcome-message').textContent = `Bienvenido, ${loggedUser}!`;
+  }
+
+  // Cambiar secciones del menú
+  function showSection(section) {
+    [menuLobbyBtn, menuChatbotBtn, menuConfigBtn, menuSantoBtn].forEach(btn => btn.classList.remove('active'));
+    lobbySection.classList.remove('active');
+    chatbotSection.classList.remove('active');
+    configSection.classList.remove('active');
+    santoSection.classList.remove('active');
+
+    switch(section) {
+      case 'lobby':
+        menuLobbyBtn.classList.add('active');
+        lobbySection.classList.add('active');
+        break;
+      case 'chatbot':
+        menuChatbotBtn.classList.add('active');
+        chatbotSection.classList.add('active');
+        break;
+      case 'config':
+        menuConfigBtn.classList.add('active');
+        configSection.classList.add('active');
+        break;
+      case 'santo':
+        menuSantoBtn.classList.add('active');
+        santoSection.classList.add('active');
+        break;
+    }
+  }
+
+  menuLobbyBtn.addEventListener('click', () => showSection('lobby'));
+  menuChatbotBtn.addEventListener('click', () => showSection('chatbot'));
+  menuConfigBtn.addEventListener('click', () => showSection('config'));
+  menuSantoBtn.addEventListener('click', () => showSection('santo'));
+
+  // Chatbot simple
+  sendBtn.addEventListener('click', () => {
+    const msg = chatInput.value.trim();
+    if(!msg) return;
+    appendMessage('Tú', msg);
+    chatInput.value = '';
+    setTimeout(() => {
+      appendMessage('Fox', getBotResponse(msg));
+    }, 700);
+  });
+
+  chatInput.addEventListener('keydown', e => {
+    if(e.key === 'Enter') sendBtn.click();
+  });
+
+  function appendMessage(sender, text) {
+    const msgDiv = document.createElement('div');
+    msgDiv.style.marginBottom = '10px';
+    if(sender === 'Fox') {
+      msgDiv.classList.add('fox');
+    } else {
+      msgDiv.classList.add('sender');
+    }
+    msgDiv.textContent = `${sender}: ${text}`;
+    chatWindow.appendChild(msgDiv);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  }
+
+  function getBotResponse(msg) {
+    msg = msg.toLowerCase();
+    if(msg.includes('hola')) return '¡Hola! ¿Cómo puedo ayudarte?';
+    if(msg.includes('adiós') || msg.includes('hasta luego')) return '¡Hasta luego! Que tengas un gran día.';
+    if(msg.includes('cómo estás')) return 'Estoy bien, gracias por preguntar.';
+    return "No entendí eso, intenta con otra cosa.";
+  }
+</script>
+
+</body>
+</html>
