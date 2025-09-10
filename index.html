@@ -1,525 +1,829 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Conex</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Conex — Dashboard Futurista</title>
 <style>
-  /* Reset */
-  * {
-    box-sizing: border-box;
+  :root{
+    --bg:#0b0b0f;
+    --panel:#171225;
+    --glass: rgba(255,255,255,0.04);
+    --accent:#7a42c0;
+    --accent-2:#9a5de5;
+    --muted:#9aa0b4;
+    --card:#1f1330;
+    --neon: rgba(154,93,229,0.12);
   }
-  body {
-    margin: 0; 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #000814; /* negro azulado */
-    color: #a1caff; /* azul claro */
-  }
+  *{box-sizing:border-box}
+  body,html{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:
+    radial-gradient(1200px 600px at 10% 10%, rgba(122,66,192,0.06), transparent),
+    radial-gradient(900px 400px at 90% 80%, rgba(154,93,229,0.04), transparent),
+    var(--bg); color:#e8e8ee; -webkit-font-smoothing:antialiased;}
+  header{height:72px; display:flex; align-items:center; justify-content:space-between; padding:0 24px; background:linear-gradient(180deg, rgba(122,66,192,0.16), rgba(122,66,192,0.06)); border-bottom:1px solid rgba(255,255,255,0.03); position:sticky; top:0; z-index:30;}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo { width:42px;height:42px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-2)); display:flex;align-items:center;justify-content:center;font-weight:700; font-size:18px;box-shadow:0 6px 24px rgba(122,66,192,0.12); }
+  header h1{font-size:18px;margin:0;color:#fff;letter-spacing:0.6px}
+  .top-controls{display:flex;align-items:center;gap:12px}
+  .icon-btn{background:transparent;border:1px solid rgba(255,255,255,0.04); padding:8px;border-radius:8px;color:var(--muted);cursor:pointer}
+  .affiliation{font-size:12px;color:var(--accent-2); text-align:center;padding:10px 0}
 
-  /* Contenedor login/registro */
-  #login-register-container {
-    width: 100vw;
-    height: 100vh;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    background: linear-gradient(135deg, #001f3f 0%, #000814 100%);
-  }
-  #login-register-container h2 {
-    color: #3399ff;
-    margin-bottom: 20px;
-    text-shadow: 0 0 8px #33a1ff;
-  }
-  form {
-    display: flex;
-    flex-direction: column;
-    width: 320px;
-    gap: 15px;
-    background: #001a3d;
-    padding: 25px 30px;
-    border-radius: 12px;
-    box-shadow: 0 0 15px #3377ff88;
-  }
-  input {
-    padding: 12px;
-    border-radius: 8px;
-    border: 1.5px solid #3399ff;
-    background: #001a3d;
-    color: #a1caff;
-    font-size: 17px;
-    transition: border-color 0.3s ease;
-  }
-  input:focus {
-    border-color: #66bbff;
-    outline: none;
-  }
-  button {
-    cursor: pointer;
-    padding: 12px;
-    font-weight: 700;
-    border-radius: 8px;
-    border: none;
-    background: linear-gradient(90deg, #0066ff, #3399ff);
-    color: white;
-    font-size: 18px;
-    box-shadow: 0 0 12px #3399ffcc;
-    transition: background 0.4s ease;
-  }
-  button:hover {
-    background: linear-gradient(90deg, #3399ff, #66bbff);
-  }
-  #toggle-login-btn {
-    margin-top: 20px;
-    background: transparent;
-    color: #66bbff;
-    font-size: 15px;
-    border: none;
-    cursor: pointer;
-    text-decoration: underline;
-    transition: color 0.3s ease;
-  }
-  #toggle-login-btn:hover {
-    color: #99d1ff;
-  }
-  #error-msg {
-    min-height: 24px;
-    font-weight: 700;
-    text-align: center;
-    color: #ff6666;
-    margin-top: 8px;
-  }
-  #captcha-display {
-    user-select: none;
-    background: #003060;
-    text-align: center;
-    padding: 10px 0;
-    font-weight: 900;
-    letter-spacing: 6px;
-    font-size: 30px;
-    border-radius: 10px;
-    color: #66bbff;
-    box-shadow: 0 0 15px #3399ff88;
-  }
+  /* layout */
+  .layout{display:flex; height:calc(100vh - 72px); gap:20px; padding:20px;}
+  .sidebar{width:88px;background:linear-gradient(180deg, rgba(50,20,80,0.18), rgba(20,10,30,0.14)); border-radius:16px; padding:14px; display:flex; flex-direction:column; align-items:center; gap:6px; box-shadow:0 8px 30px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.03);}
+  .sb-btn{width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:transparent;border:0;color:rgba(255,255,255,0.8);font-size:20px;cursor:pointer;transition:all .18s}
+  .sb-btn:hover{transform:translateY(-6px); box-shadow:0 6px 18px rgba(154,93,229,0.15); color:var(--accent-2)}
+  .sb-label{font-size:11px;color:var(--muted);margin-top:6px}
 
-  /* Panel Principal */
-  #panel-container {
-    display: none;
-    height: 100vh;
-    display: flex;
-    flex-direction: row;
-    background: #001120;
-    color: #a1caff;
-  }
+  .main{flex:1; display:flex; flex-direction:column; gap:16px;}
+  .content{display:grid;grid-template-columns: 1fr 360px; gap:18px; align-items:start;}
+  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:14px;padding:18px;border:1px solid rgba(255,255,255,0.02); box-shadow:0 8px 30px rgba(0,0,0,0.6)}
+  .fullpanel{grid-column:1 / -1}
 
-  /* Sidebar */
-  #sidebar {
-    width: 220px;
-    background: linear-gradient(180deg, #000b20 0%, #001a3d 100%);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 20px 15px;
-    box-shadow: 3px 0 10px #0055ff88;
-  }
-  #sidebar button {
-    background: #003060;
-    border: none;
-    color: #a1caff;
-    padding: 15px 18px;
-    cursor: pointer;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 18px;
-    text-align: left;
-    box-shadow: 0 0 6px #3399ff99;
-    transition: background 0.3s ease, color 0.3s ease;
-  }
-  #sidebar button.active,
-  #sidebar button:hover {
-    background: #3399ff;
-    color: #001120;
-    box-shadow: 0 0 18px #66bbff;
-  }
+  /* top hero */
+  .hero{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .welcome{display:flex;flex-direction:column;gap:6px}
+  .welcome h2{margin:0;font-weight:600;font-size:20px}
+  .welcome p{margin:0;color:var(--muted);font-size:13px}
+  .socials{display:flex;gap:10px}
+  .socials a{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03); color:var(--muted); text-decoration:none; transition:.18s}
+  .socials a:hover{box-shadow:0 8px 30px rgba(122,66,192,0.12); color:var(--accent-2)}
 
-  /* Sections */
-  .section {
-    flex-grow: 1;
-    padding: 30px 40px;
-    display: none;
-    overflow-y: auto;
-  }
-  .section.active {
-    display: block;
-  }
+  /* user card */
+  .user-card{display:flex;gap:12px;align-items:center}
+  .avatar{width:76px;height:76px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:26px;box-shadow:0 10px 30px rgba(122,66,192,0.16)}
+  .uc-right{display:flex;flex-direction:column;gap:6px}
+  .role-pill{font-size:12px;padding:6px 8px;border-radius:999px;background:rgba(154,93,229,0.12);color:var(--accent-2);display:inline-block}
 
-  /* Lobby */
-  #welcome-message {
-    font-size: 28px;
-    font-weight: 900;
-    color: #66bbff;
-    text-shadow: 0 0 15px #3399ff;
-  }
+  .kpis{display:flex;gap:12px;margin-top:10px}
+  .kpi{background:linear-gradient(90deg, rgba(255,255,255,0.02), transparent); padding:10px;border-radius:10px;flex:1;text-align:center;border:1px solid rgba(255,255,255,0.02)}
+  .kpi h3{margin:0;font-size:18px}
+  .kpi p{margin:0;color:var(--muted);font-size:12px}
 
-  /* Chatbot */
-  #chatbot-section h2 {
-    font-size: 28px;
-    font-weight: 900;
-    color: #66bbff;
-    text-shadow: 0 0 12px #3399ff;
-    margin-bottom: 15px;
-  }
-  #chat-window {
-    background:#00203a; 
-    height: 350px; 
-    overflow-y: auto; 
-    padding: 15px; 
-    margin-bottom: 15px; 
-    border-radius: 12px;
-    font-size: 20px;
-    box-shadow: inset 0 0 12px #0055ffaa;
-    color: #cce7ff;
-  }
-  #chat-input {
-    width: 78%; 
-    padding: 14px; 
-    border-radius: 10px; 
-    border: 1.5px solid #3399ff; 
-    font-size: 18px;
-    background: #001a3d;
-    color: #a1caff;
-  }
-  #chat-input:focus {
-    outline: none;
-    border-color: #66bbff;
-  }
-  #send-btn {
-    width: 20%; 
-    margin-left: 2%; 
-    padding: 14px; 
-    font-weight: 900; 
-    border-radius: 10px; 
-    border: none; 
-    background: linear-gradient(90deg, #3399ff, #66bbff);
-    color: white;
-    font-size: 18px;
-    box-shadow: 0 0 15px #66bbffcc;
-    cursor: pointer;
-    transition: background 0.4s ease;
-  }
-  #send-btn:hover {
-    background: linear-gradient(90deg, #66bbff, #3399ff);
-  }
-  /* Chatbot messages */
-  #chat-window div {
-    margin-bottom: 12px;
-    padding: 10px 14px;
-    border-radius: 10px;
-  }
-  #chat-window div.sender {
-    background: #004080;
-    color: #b0d8ff;
-    font-weight: 700;
-  }
-  #chat-window div.fox {
-    background: #3366ff;
-    color: #dceeff;
-    font-weight: 900;
-    box-shadow: 0 0 8px #3399ff;
-  }
+  /* projects list */
+  .projects-grid{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+  .project{width:180px;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)}
+  .project h4{margin:0;font-size:15px}
+  .project p{margin:8px 0 0;font-size:12px;color:var(--muted)}
 
-  /* Configuración */
-  #config-section h2 {
-    font-size: 26px;
-    font-weight: 900;
-    color: #66bbff;
-    margin-bottom: 20px;
-    text-shadow: 0 0 8px #3399ff;
-  }
-  #config-section p {
-    font-size: 18px;
-    margin-bottom: 12px;
-  }
+  /* classes list */
+  .class-list{display:flex;flex-direction:column;gap:10px; margin-top:8px}
+  .class-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02)}
+  .class-item small{color:var(--muted)}
 
-  /* Santo Cord */
-  #santo-section h2 {
-    color: #3399ff;
-    font-weight: 900;
-    font-size: 28px;
-    text-shadow: 0 0 12px #3399ff;
-    margin-bottom: 15px;
-  }
-  #santo-section p {
-    font-size: 18px;
-    color: #a1caff;
-    margin-bottom: 10px;
-  }
-  #santo-section a {
-    color: #66bbff; 
-    text-decoration: underline; 
-    font-weight: 700;
-    font-size: 18px;
-    transition: color 0.3s ease;
-  }
-  #santo-section a:hover {
-    color: #99d1ff;
+  /* info panel */
+  .info-row{display:flex;justify-content:space-between;gap:12px}
+  .info-field{flex:1}
+
+  /* lunares */
+  .lunares-box{display:flex;flex-direction:column;gap:8px}
+  .chat{height:240px;overflow:auto;padding:10px;background:rgba(0,0,0,0.06);border-radius:10px}
+  .msg{padding:8px;border-radius:8px;margin-bottom:8px}
+  .msg.user{background:linear-gradient(90deg, rgba(122,66,192,0.16), rgba(154,93,229,0.08))}
+  .msg.bot{background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02)}
+
+  /* others/tetris */
+  #tetrisCanvas{background:#0b0b0f;border-radius:8px;display:block;margin:0 auto;box-shadow:0 12px 30px rgba(0,0,0,0.6)}
+  .small{font-size:12px;color:var(--muted)}
+
+  /* responsive */
+  @media (max-width:980px){
+    .content{grid-template-columns:1fr;}
+    .sidebar{display:none}
   }
 </style>
 </head>
 <body>
-
-  <!-- Login y Registro -->
-  <div id="login-register-container">
-    <h2 id="form-title">Login</h2>
-    <form id="auth-form" autocomplete="off">
-      <input type="text" id="username" placeholder="Usuario" required />
-      <input type="password" id="password" placeholder="Contraseña" required />
-      <div id="captcha-display"></div>
-      <input type="text" id="captcha-input" placeholder="Escribe el captcha" required />
-      <button type="submit" id="submit-btn">Ingresar</button>
-    </form>
-    <button id="toggle-login-btn">¿No tienes cuenta? Regístrate</button>
-    <div id="error-msg"></div>
-  </div>
-
-  <!-- Panel Principal -->
-  <div id="panel-container">
-    <div id="sidebar">
-      <button id="menu-lobby" class="active">Lobby</button>
-      <button id="menu-chatbot">Chatbot Fox</button>
-      <button id="menu-config">Configuración</button>
-      <button id="menu-santo">Santo Cord</button>
-    </div>
-
-    <div id="lobby-section" class="section active">
-      <h2 id="welcome-message">Bienvenido!</h2>
-      <p>Esta es la página de inicio.</p>
-    </div>
-
-    <div id="chatbot-section" class="section">
-      <h2>Chatbot Fox</h2>
-      <div id="chat-window"></div>
-      <input id="chat-input" placeholder="Escribe tu mensaje..." />
-      <button id="send-btn">Enviar</button>
-    </div>
-
-    <div id="config-section" class="section">
-      <h2>Configuración</h2>
-      <p>Usuario: <span id="config-username"></span></p>
-      <p>Contraseña: <span id="config-password"></span></p>
-    </div>
-
-    <div id="santo-section" class="section">
-      <h2>Santo Cord</h2>
-      <p>Owner: <strong>Santo Cord</strong></p>
-      <p>
-        github: 
-        <a href="https://github.com/Santo-CORD" target="_blank" rel="noopener noreferrer">
-          https://github.com/Santo-CORD
-        </a>
-      </p>
+<header>
+  <div class="brand">
+    <div class="logo">C</div>
+    <div>
+      <h1>Conex</h1>
+      <div class="small" style="color:var(--muted)">Portal de programación • Futurista</div>
     </div>
   </div>
+  <div class="top-controls">
+    <div class="affiliation">Esta Web Está Afiliada Con connectados.tech</div>
+    <button class="icon-btn" id="notifBtn">🔔 <span id="notifCount" style="color:var(--accent-2);margin-left:6px"></span></button>
+    <div style="width:8px"></div>
+  </div>
+</header>
 
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <button class="sb-btn" title="Home" onclick="nav('home')">🏠</button>
+    <button class="sb-btn" title="Clases" onclick="nav('classes')">📚</button>
+    <button class="sb-btn" title="Info" onclick="nav('info')">📑</button>
+    <button class="sb-btn" title="Lunares" onclick="nav('lunares')">🤖</button>
+    <button class="sb-btn" title="Coaches" onclick="nav('coaches')">🧑‍🏫</button>
+    <button class="sb-btn" title="Tools" onclick="nav('tools')">🛠️</button>
+    <button class="sb-btn" title="Others" onclick="nav('others')">⋯</button>
+    <div class="sb-label">Menu</div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <!-- login/initial info + content -->
+    <div id="beforeLogin" style="padding:0 12px;">
+      <!-- Projects info visible before login -->
+      <div class="panel card" id="infoPanel">
+        <div class="hero">
+          <div>
+            <h2 style="color:var(--accent-2)">Proyectos destacados de Conex</h2>
+            <p class="small" style="color:var(--muted);margin-top:8px">Conex es una plataforma de programación, retos y colaboración. Aquí puedes crear clases, compartir tips y trabajar con coaches.</p>
+            <div class="projects-grid" id="projectsGrid">
+              <!-- JS fills -->
+            </div>
+          </div>
+          <div style="width:220px;text-align:center">
+            <div style="padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.02)">
+              <h3 style="margin:0">Únete</h3>
+              <p class="small" style="color:var(--muted)">Inicia sesión abajo para acceder al dashboard</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- login form -->
+      <div style="max-width:520px;margin:16px auto" id="loginBox">
+        <div class="panel">
+          <h3>Login</h3>
+          <div style="margin-top:10px">
+            <input id="username" placeholder="Usuario (ej: conex.santo)" />
+            <input id="password" placeholder="Contraseña" type="password" />
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button onclick="doLogin()">Entrar</button>
+              <button onclick="fillTest()">Autocompletar test</button>
+            </div>
+            <p id="loginMsg" style="color:#ffb4c0;margin-top:8px"></p>
+            <p class="small" style="margin-top:6px;color:var(--muted)">Usuarios iniciales: conex.santo (admin), conex.brayan (coach), conex.sant (student), conex.test (tester)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard area -->
+    <div id="app" class="content hidden" style="padding:0 12px;">
+      <!-- left main -->
+      <div>
+        <div class="panel hero" id="panelHero">
+          <div class="user-card">
+            <div class="avatar" id="avatarTxt">C</div>
+            <div class="uc-right">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div>
+                  <h2 id="userName">Usuario</h2>
+                  <div class="small" id="userRole">Rol</div>
+                </div>
+                <div style="margin-left:12px"><span id="rolePill" class="role-pill">Role</span></div>
+              </div>
+              <div class="kpis">
+                <div class="kpi"><h3 id="xpVal">0 XP</h3><p>Progreso</p></div>
+                <div class="kpi"><h3 id="levelVal">Nivel 1</h3><p>Nivel</p></div>
+                <div class="kpi"><h3 id="joinedVal">Hoy</h3><p>Último acceso</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Projects / News -->
+        <div class="panel">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>Proyectos & Novedades</h3>
+            <div class="small" style="color:var(--muted)">Actualizado recientemente</div>
+          </div>
+          <div class="projects-grid" id="projListDash" style="margin-top:12px"></div>
+        </div>
+
+        <!-- Classes panel compact -->
+        <div class="panel">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>Clases</h3>
+            <div style="display:flex;gap:8px">
+              <input id="quickClassName" placeholder="conex.class" style="width:180px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit" />
+              <button onclick="quickCreateClass()">Crear</button>
+            </div>
+          </div>
+          <div id="classFeed" class="class-list" style="margin-top:10px"></div>
+        </div>
+      </div>
+
+      <!-- right column -->
+      <aside>
+        <div class="panel">
+          <h4>Información</h4>
+          <div style="margin-top:10px" class="info-row">
+            <div class="info-field">
+              <div class="small">Usuario</div>
+              <strong id="infoUser">-</strong>
+            </div>
+            <div class="info-field">
+              <div class="small">Rol</div>
+              <strong id="infoRole">-</strong>
+            </div>
+          </div>
+          <div style="margin-top:12px">
+            <div class="small">Fecha creación</div>
+            <div id="infoCreated">-</div>
+            <div class="small" style="margin-top:8px">Último acceso</div>
+            <div id="infoLast">-</div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:12px">
+          <h4>Lunares (IA)</h4>
+          <div class="lunares-box">
+            <div class="chat" id="lunaresChat"></div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <input id="lunaresInput" placeholder="Pregunta a Lunares..." style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent" />
+              <button onclick="sendToLunares()">Enviar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:12px">
+          <h4>Coaches</h4>
+          <div id="coachesList" style="margin-top:8px"></div>
+          <div style="margin-top:8px"><button onclick="connectCoach()">Conectarme con coach</button></div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Detailed views (hidden sections) -->
+    <div id="views" class="fullpanel" style="padding:0 12px;display:none">
+      <div id="classesView" class="panel hidden">
+        <h3>Gestión de Clases</h3>
+        <div style="display:flex;gap:12px;margin-top:12px">
+          <div style="flex:1">
+            <input id="className" placeholder="conex.class" />
+            <input id="classUsers" placeholder="usuarios separados por coma" />
+            <button onclick="createClass()">Crear Clase (Admin/Coach)</button>
+          </div>
+          <div style="width:360px">
+            <h4>Clases actuales</h4>
+            <div id="classesAdminList"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="othersView" class="panel hidden">
+        <h3>Others</h3>
+        <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+          <div style="flex:1;min-width:360px" class="panel">
+            <h4>Tetris</h4>
+            <canvas id="tetrisCanvas" width="240" height="400"></canvas>
+            <div style="display:flex;justify-content:center;gap:8px;margin-top:8px">
+              <button onclick="startTetris()">Start</button>
+              <button onclick="pauseTetris()">Pause</button>
+              <button onclick="resetTetris()">Reset</button>
+            </div>
+            <p class="small">Usa ← → ↓ ↑ (o A/D/S/W) para controlar.</p>
+          </div>
+
+          <div style="width:320px" class="panel">
+            <h4>Mini Tools</h4>
+            <button onclick="alert('Asignar tarea (simulado)')">Asignar tarea</button>
+            <button onclick="alert('Abrir tutorial (simulado)')">Abrir tutorial</button>
+            <button onclick="alert('Enviar tip global (simulado)')">Enviar Tip Global</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="infoView" class="panel hidden">
+        <h3>Información de Cuenta</h3>
+        <div id="accountsList"></div>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<!-- Script -->
 <script>
-  // Referencias
-  const loginRegisterContainer = document.getElementById('login-register-container');
-  const panelContainer = document.getElementById('panel-container');
+/* ---------------------------
+   Data init & helpers
+   --------------------------- */
+if(!localStorage.getItem('users')){
+  const initial = [
+    {username:'conex.santo', password:'2424', role:'admin', created: new Date().toLocaleString(), lastAccess: null},
+    {username:'conex.brayan', password:'1234', role:'coach', created: new Date().toLocaleString(), lastAccess: null},
+    {username:'conex.sant', password:'2424', role:'default', created: new Date().toLocaleString(), lastAccess: null},
+    {username:'conex.test', password:'test', role:'default', created: new Date().toLocaleString(), lastAccess: null}
+  ];
+  localStorage.setItem('users', JSON.stringify(initial));
+}
+if(!localStorage.getItem('classes')) localStorage.setItem('classes', JSON.stringify([]));
+if(!localStorage.getItem('tips')) localStorage.setItem('tips', JSON.stringify([]));
+let appState = {
+  currentUser: null,
+  notifs: []
+};
 
-  const authForm = document.getElementById('auth-form');
-  const usernameInput = document.getElementById('username');
-  const passwordInput = document.getElementById('password');
-  const captchaDisplay = document.getElementById('captcha-display');
-  const captchaInput = document.getElementById('captcha-input');
-  const errorMsg = document.getElementById('error-msg');
-  const toggleLoginBtn = document.getElementById('toggle-login-btn');
-  const formTitle = document.getElementById('form-title');
-  const submitBtn = document.getElementById('submit-btn');
+/* small UI helpers */
+function el(id){ return document.getElementById(id); }
+function setText(id, txt){ if(el(id)) el(id).innerText = txt; }
 
-  // Panel elementos y menú
-  const menuLobbyBtn = document.getElementById('menu-lobby');
-  const menuChatbotBtn = document.getElementById('menu-chatbot');
-  const menuConfigBtn = document.getElementById('menu-config');
-  const menuSantoBtn = document.getElementById('menu-santo');
-
-  const lobbySection = document.getElementById('lobby-section');
-  const chatbotSection = document.getElementById('chatbot-section');
-  const configSection = document.getElementById('config-section');
-  const santoSection = document.getElementById('santo-section');
-
-  const configUsernameSpan = document.getElementById('config-username');
-  const configPasswordSpan = document.getElementById('config-password');
-
-  // Chatbot elementos
-  const chatWindow = document.getElementById('chat-window');
-  const chatInput = document.getElementById('chat-input');
-  const sendBtn = document.getElementById('send-btn');
-
-  let isLoginMode = true; // true: login, false: registro
-  let currentCaptcha = '';
-  let users = JSON.parse(localStorage.getItem('users') || '{}');
-  let loggedUser = null;
-
-  // Generar captcha (5 números)
-  function generateCaptcha() {
-    let captcha = '';
-    for(let i=0; i<5; i++) {
-      captcha += Math.floor(Math.random() * 10);
-    }
-    return captcha;
-  }
-
-  // Mostrar nuevo captcha
-  function refreshCaptcha() {
-    currentCaptcha = generateCaptcha();
-    captchaDisplay.textContent = currentCaptcha;
-    captchaInput.value = '';
-  }
-  refreshCaptcha();
-
-  // Cambiar entre login y registro
-  toggleLoginBtn.addEventListener('click', () => {
-    isLoginMode = !isLoginMode;
-    if(isLoginMode) {
-      formTitle.textContent = 'Login';
-      submitBtn.textContent = 'Ingresar';
-      toggleLoginBtn.textContent = '¿No tienes cuenta? Regístrate';
-    } else {
-      formTitle.textContent = 'Registro';
-      submitBtn.textContent = 'Registrar';
-      toggleLoginBtn.textContent = '¿Ya tienes cuenta? Inicia sesión';
-    }
-    errorMsg.textContent = '';
-    errorMsg.style.color = '#ff6666';
-    refreshCaptcha();
+/* ---------------------------
+   Fill initial project cards
+   --------------------------- */
+const projects = [
+  {id:'codex', name:'Codex', desc:'Generación y gestión de código integrada.'},
+  {id:'foro', name:'Foro Conex', desc:'Lugar para compartir dudas y soluciones.'},
+  {id:'lunares', name:'Lunares IA', desc:'Asistente en desarrollo que sugerirá soluciones.'}
+];
+function renderProjectsGrid(){
+  const g = el('projectsGrid');
+  const pd = el('projListDash');
+  g.innerHTML = '';
+  pd.innerHTML = '';
+  projects.forEach(p=>{
+    const d = document.createElement('div'); d.className='project';
+    d.innerHTML = `<h4>${p.name}</h4><p>${p.desc}</p><div style="margin-top:8px"><button onclick="alert('Info: ${p.name}')">Ver información</button></div>`;
+    g.appendChild(d);
+    const d2 = d.cloneNode(true);
+    pd.appendChild(d2);
   });
+}
+renderProjectsGrid();
 
-  // Validar formulario
-  authForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const username = usernameInput.value.trim();
-    const password = passwordInput.value.trim();
-    const captchaVal = captchaInput.value.trim();
+/* ---------------------------
+   Login / Dashboard flow
+   --------------------------- */
+function doLogin(){
+  el('loginMsg').innerText = '';
+  const u = el('username').value.trim();
+  const p = el('password').value;
+  const users = JSON.parse(localStorage.getItem('users'));
+  const user = users.find(x=> x.username === u && x.password === p);
+  if(!user){ el('loginMsg').innerText = 'Usuario/clave incorrectos'; return; }
+  appState.currentUser = user;
+  // update last access
+  user.lastAccess = new Date().toLocaleString();
+  localStorage.setItem('users', JSON.stringify(users));
+  enterApp();
+}
+function fillTest(){
+  el('username').value = 'conex.test';
+  el('password').value = 'test';
+}
 
-    if(captchaVal !== currentCaptcha) {
-      errorMsg.textContent = 'Captcha incorrecto. Intenta de nuevo.';
-      refreshCaptcha();
-      return;
+/* show app */
+function enterApp(){
+  // hide beforeLogin
+  document.getElementById('beforeLogin').style.display = 'none';
+  // show app content
+  el('app').classList.remove('hidden');
+  // fill user panel
+  refreshUserPanel();
+  notify(`Bienvenido ${appState.currentUser.username}`);
+  // confetti
+  startConfetti();
+  // render classes and coaches
+  renderClassFeed();
+  renderCoaches();
+  renderAccountsList();
+}
+
+/* refresh user info */
+function refreshUserPanel(){
+  const u = appState.currentUser;
+  setText('userName', u.username);
+  setText('userRole', u.role);
+  setText('infoUser', u.username);
+  setText('infoRole', u.role);
+  setText('infoCreated', u.created);
+  setText('infoLast', u.lastAccess || '—');
+  el('avatarTxt').innerText = u.username.charAt(u.username.indexOf('.')+1 || 0).toUpperCase();
+  el('rolePill').innerText = u.role;
+  // XP/level simulate
+  const xp = Math.floor(Math.random()*900) + 100;
+  const level = Math.floor(xp/250) + 1;
+  setText('xpVal', xp + ' XP');
+  setText('levelVal', 'Nivel ' + level);
+  setText('joinedVal', u.lastAccess ? u.lastAccess : 'Hoy');
+}
+
+/* logout */
+function logout(){
+  appState.currentUser = null;
+  document.getElementById('beforeLogin').style.display = '';
+  el('app').classList.add('hidden');
+  notify('Has cerrado sesión');
+  // stop tetris if running
+  pauseTetris();
+}
+
+/* notifications */
+function notify(msg){
+  appState.notifs.push({msg, at: new Date()});
+  el('notifCount').innerText = appState.notifs.length;
+}
+
+/* simple confetti */
+function startConfetti(){
+  for(let i=0;i<90;i++){
+    const c = document.createElement('div');
+    c.className = 'confetti-piece';
+    c.style.left = Math.random()*innerWidth + 'px';
+    c.style.top = (-50 - Math.random()*200) + 'px';
+    c.style.background = `hsl(${Math.random()*360},90%,60%)`;
+    c.style.width = (6+Math.random()*8)+'px';
+    c.style.height = (6+Math.random()*8)+'px';
+    c.style.opacity = 0.95;
+    document.body.appendChild(c);
+    // animate via CSS keyframes (fall)
+    setTimeout(()=> c.remove(), 3500 + Math.random()*1000);
+  }
+}
+
+/* ---------------------------
+   Navigation
+   --------------------------- */
+function nav(section){
+  // show sections within app
+  el('views').style.display = 'none';
+  // ensure main content visible
+  el('app').classList.remove('hidden');
+  // hide all detailed view panels
+  ['classesView','othersView','infoView'].forEach(id=> el(id).classList.add('hidden'));
+  // hide others main panes
+  ['panelHero','classFeed'].forEach(id=> { if(el(id)) el(id).style.display=''; });
+  if(section === 'home') {
+    el('app').classList.remove('hidden');
+    showMainHome();
+  } else if(section === 'classes'){
+    el('views').style.display = '';
+    el('classesView').classList.remove('hidden');
+    showMainClasses();
+  } else if(section === 'info'){
+    el('views').style.display = '';
+    el('infoView').classList.remove('hidden');
+    renderAccountsList();
+  } else if(section === 'lunares'){
+    // focus chat area
+    if(!appState.currentUser){ alert('Inicia sesión para usar Lunares'); return; }
+    showMainHome();
+    const chat = el('lunaresChat'); chat.scrollTop = chat.scrollHeight;
+  } else if(section === 'coaches'){
+    showMainHome(); renderCoaches();
+  } else if(section === 'tools'){
+    showMainHome();
+    alert('Tools: funciones para coaches y admins en la sección Tools.');
+  } else if(section === 'others'){
+    el('views').style.display = '';
+    el('othersView').classList.remove('hidden');
+    // show tetris canvas - init
+    initTetris();
+  }
+}
+function showMainHome(){/* nothing special now */}
+
+function showMainClasses(){/* nothing special now */}
+
+function showPanel(name){
+  // app main panels
+  if(name==='home') { el('homePanel').style.display='block'; el('classesPanel').style.display='none'; }
+  if(name==='classes'){ el('homePanel').style.display='none'; el('classesPanel').style.display='block'; }
+}
+
+/* ---------------------------
+   Classes / Groups
+   --------------------------- */
+function quickCreateClass(){
+  const name = el('quickClassName').value.trim() || 'conex.class';
+  // only for admins/coaches
+  if(!appState.currentUser) { alert('Inicia sesión'); return; }
+  if(!(appState.currentUser.role === 'admin' || appState.currentUser.role === 'coach')){
+    alert('Solo admins/coaches pueden crear clases');
+    return;
+  }
+  const classes = JSON.parse(localStorage.getItem('classes'));
+  classes.push({name, owner: appState.currentUser.username, users: [], tips: []});
+  localStorage.setItem('classes', JSON.stringify(classes));
+  notify(`Clase ${name} creada`);
+  renderClassFeed();
+}
+
+function createClass(){
+  // detailed create in classes view
+  const name = el('className').value.trim() || 'conex.class';
+  const usersRaw = el('classUsers').value.trim();
+  const users = usersRaw ? usersRaw.split(',').map(s=>s.trim()).filter(Boolean) : [];
+  if(!appState.currentUser) { alert('inicia sesión'); return; }
+  if(!(appState.currentUser.role === 'admin' || appState.currentUser.role === 'coach')) { alert('no tienes permiso'); return; }
+  const classes = JSON.parse(localStorage.getItem('classes'));
+  classes.push({name, owner: appState.currentUser.username, users, tips: []});
+  localStorage.setItem('classes', JSON.stringify(classes));
+  el('className').value = 'conex.class'; el('classUsers').value = '';
+  notify(`Clase ${name} creada`);
+  updateClassesAdminList();
+}
+
+function renderClassFeed(){
+  const classes = JSON.parse(localStorage.getItem('classes'));
+  const feed = el('classFeed');
+  feed.innerHTML = '';
+  classes.forEach(c=>{
+    const item = document.createElement('div'); item.className = 'class-item';
+    const left = document.createElement('div');
+    left.innerHTML = `<strong>${c.name}</strong><div class="small">Owner: ${c.owner}</div>`;
+    const right = document.createElement('div');
+    // check access
+    let canEnter = false;
+    if(!appState.currentUser) canEnter = false;
+    else if(appState.currentUser.role === 'admin' || appState.currentUser.role === 'coach') canEnter = true;
+    else if(c.users && c.users.includes(appState.currentUser.username)) canEnter = true;
+    const btn = document.createElement('button');
+    btn.innerText = canEnter ? 'Entrar' : 'Solicitar';
+    btn.onclick = ()=> {
+      if(canEnter) openClassRoom(c.name);
+      else alert('No tienes acceso a esta clase. Pide a un coach o admin que te agregue.');
+    };
+    right.appendChild(btn);
+    item.appendChild(left); item.appendChild(right);
+    feed.appendChild(item);
+  });
+}
+
+function openClassRoom(name){
+  // simple modal-like prompt to show messages and send tips
+  const classes = JSON.parse(localStorage.getItem('classes'));
+  const cls = classes.find(x=>x.name === name);
+  if(!cls) return alert('Clase no encontrada');
+  let html = `Clase: ${cls.name}\nOwner: ${cls.owner}\nUsuarios: ${ (cls.users||[]).join(', ') }\n\nMensajes:\n`;
+  (cls.tips||[]).forEach(m=>{
+    html += `${m.at} - ${m.from}: ${m.text}\n`;
+  });
+  const txt = prompt(`Bienvenido a ${cls.name}\nEscribe un tip o mensaje para la clase (deja vacio para salir):`);
+  if(txt && txt.trim()){
+    const tip = {from: appState.currentUser.username, text: txt.trim(), at: new Date().toLocaleString()};
+    cls.tips = cls.tips || [];
+    cls.tips.push(tip);
+    localStorage.setItem('classes', JSON.stringify(classes));
+    notify(`Tip enviado a ${cls.name}`);
+  }
+}
+
+/* admin view update*/
+function updateClassesAdminList(){
+  const classes = JSON.parse(localStorage.getItem('classes'));
+  const out = el('classesAdminList'); out.innerHTML = '';
+  classes.forEach(c=>{
+    const d = document.createElement('div'); d.className='tarjeton';
+    d.innerHTML = `<strong>${c.name}</strong><div class="small">Owner: ${c.owner}</div><div class="small">Users: ${(c.users||[]).join(', ')}</div><div style="margin-top:6px"><button onclick="removeClass('${c.name}')">Eliminar</button></div>`;
+    out.appendChild(d);
+  });
+}
+function removeClass(name){
+  if(!confirm('Eliminar clase '+name+'?')) return;
+  let classes = JSON.parse(localStorage.getItem('classes'));
+  classes = classes.filter(c=>c.name !== name);
+  localStorage.setItem('classes', JSON.stringify(classes));
+  updateClassesAdminList(); renderClassFeed();
+}
+
+/* ---------------------------
+   Coaches / Connect
+   --------------------------- */
+function renderCoaches(){
+  const users = JSON.parse(localStorage.getItem('users') || '[]');
+  const coaches = users.filter(u=>u.role === 'coach');
+  const out = el('coachesList'); out.innerHTML = '';
+  coaches.forEach(c=>{
+    const d = document.createElement('div'); d.className='tarjeton';
+    d.innerHTML = `<strong>${c.username}</strong><div class="small">Coach</div><div style="margin-top:6px"><button onclick="messageCoach('${c.username}')">Enviar mensaje</button></div>`;
+    out.appendChild(d);
+  });
+}
+function messageCoach(name){
+  const txt = prompt(`Mensaje a ${name}:`);
+  if(!txt) return;
+  notify(`Mensaje enviado a ${name} (simulado)`);
+}
+function connectCoach(){
+  alert('Función de conexión simulada. Pronto: conexión en tiempo real.');
+}
+
+/* ---------------------------
+   Accounts list & info
+   --------------------------- */
+function renderAccountsList(){
+  const users = JSON.parse(localStorage.getItem('users') || '[]');
+  const out = el('accountsList'); out.innerHTML = '';
+  users.forEach(u=>{
+    const d = document.createElement('div'); d.className='tarjeton';
+    d.innerHTML = `<strong>${u.username}</strong><div class="small">Rol: ${u.role}</div><div class="small">Creado: ${u.created}</div><div style="margin-top:6px">Clave: <code style="background:rgba(0,0,0,0.2);padding:2px 6px;border-radius:4px">${u.password}</code></div>`;
+    out.appendChild(d);
+  });
+}
+
+/* ---------------------------
+   Lunares placeholder
+   --------------------------- */
+function sendToLunares(){
+  const input = el('lunaresInput');
+  const txt = input.value.trim(); if(!txt) return;
+  const chat = el('lunaresChat');
+  const p = document.createElement('div'); p.className='msg user'; p.innerText = `Tú: ${txt}`; chat.appendChild(p);
+  input.value='';
+  // fake response
+  setTimeout(()=>{
+    const r = document.createElement('div'); r.className='msg bot'; r.innerText = `Lunares: Estoy en proceso. Sugerencia: prueba con "console.log()" o revisa la documentación. (respuesta simulada)`; chat.appendChild(r);
+    chat.scrollTop = chat.scrollHeight;
+  }, 700 + Math.random()*800);
+}
+
+/* ---------------------------
+   TETRIS (simple)
+   --------------------------- */
+/* Basic tetris implemented on canvas - moderate complexity but functional */
+const tetris = {
+  canvas: null, ctx: null, gridW:10, gridH:20, block:20,
+  board: [], current: null, next: null, running:false, tick:500, timer:null, score:0
+};
+const pieces = {
+  I: [[1,1,1,1]],
+  J: [[1,0,0],[1,1,1]],
+  L: [[0,0,1],[1,1,1]],
+  O: [[1,1],[1,1]],
+  S: [[0,1,1],[1,1,0]],
+  T: [[0,1,0],[1,1,1]],
+  Z: [[1,1,0],[0,1,1]]
+};
+function initTetris(){
+  if(tetris.canvas) return; // init once
+  tetris.canvas = el('tetrisCanvas');
+  tetris.ctx = tetris.canvas.getContext('2d');
+  tetris.block = Math.floor(tetris.canvas.width / tetris.gridW);
+  resetBoard();
+  drawBoard();
+  document.addEventListener('keydown', tetrisKey);
+}
+function randomPiece(){
+  const keys = Object.keys(pieces);
+  const k = keys[Math.floor(Math.random()*keys.length)];
+  const shape = pieces[k].map(r=>r.slice());
+  return {shape, x: Math.floor((tetris.gridW - shape[0].length)/2), y:0, type:k};
+}
+function resetBoard(){
+  tetris.board = Array.from({length:tetris.gridH}, ()=> Array(tetris.gridW).fill(0));
+  tetris.current = randomPiece();
+  tetris.next = randomPiece();
+  tetris.score = 0;
+  drawBoard();
+}
+function drawBoard(){
+  const ctx = tetris.ctx;
+  ctx.clearRect(0,0,tetris.canvas.width,tetris.canvas.height);
+  // draw placed
+  for(let y=0;y<tetris.gridH;y++){
+    for(let x=0;x<tetris.gridW;x++){
+      if(tetris.board[y][x]) drawCell(x,y,tetris.board[y][x]);
     }
-    if(username === '' || password === '') {
-      errorMsg.textContent = 'Usuario y contraseña son obligatorios.';
-      return;
-    }
-
-    if(isLoginMode) {
-      // Login
-      if(users[username] && users[username] === password) {
-        loggedUser = username;
-        errorMsg.textContent = '';
-        showPanel();
-      } else {
-        errorMsg.textContent = 'Usuario o contraseña incorrectos.';
-        refreshCaptcha();
+  }
+  // draw current
+  const cur = tetris.current;
+  if(cur){
+    for(let r=0;r<cur.shape.length;r++){
+      for(let c=0;c<cur.shape[r].length;c++){
+        if(cur.shape[r][c]) drawCell(cur.x + c, cur.y + r, 1);
       }
-    } else {
-      // Registro
-      if(users[username]) {
-        errorMsg.textContent = 'El usuario ya existe.';
-        refreshCaptcha();
-      } else {
-        users[username] = password;
-        localStorage.setItem('users', JSON.stringify(users));
-        errorMsg.style.color = '#77dd77';
-        errorMsg.textContent = 'Registro exitoso. Ahora inicia sesión.';
-        isLoginMode = true;
-        formTitle.textContent = 'Login';
-        submitBtn.textContent = 'Ingresar';
-        toggleLoginBtn.textContent = '¿No tienes cuenta? Regístrate';
-        refreshCaptcha();
-        setTimeout(() => {
-          errorMsg.textContent = '';
-          errorMsg.style.color = '#ff6666';
-        }, 4000);
+    }
+  }
+  // draw grid lines faint
+  ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+  for(let x=0;x<=tetris.gridW;x++){
+    ctx.beginPath(); ctx.moveTo(x*tetris.block,0); ctx.lineTo(x*tetris.block,tetris.gridH*tetris.block); ctx.stroke();
+  }
+  for(let y=0;y<=tetris.gridH;y++){
+    ctx.beginPath(); ctx.moveTo(0,y*tetris.block); ctx.lineTo(tetris.gridW*tetris.block,y*tetris.block); ctx.stroke();
+  }
+}
+function drawCell(x,y,v){
+  const ctx = tetris.ctx;
+  const b = tetris.block;
+  const px = x*b, py = y*b;
+  ctx.fillStyle = v === 1 ? 'rgba(122,66,192,0.95)' : 'rgba(154,93,229,0.95)';
+  ctx.fillRect(px+1,py+1,b-2,b-2);
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.strokeRect(px+1,py+1,b-2,b-2);
+}
+function canMove(shape, nx, ny){
+  for(let r=0;r<shape.length;r++){
+    for(let c=0;c<shape[r].length;c++){
+      if(!shape[r][c]) continue;
+      const x = nx + c, y = ny + r;
+      if(x<0 || x>=tetris.gridW || y>=tetris.gridH) return false;
+      if(y>=0 && tetris.board[y][x]) return false;
+    }
+  }
+  return true;
+}
+function tick(){
+  if(!tetris.running) return;
+  const cur = tetris.current;
+  if(canMove(cur.shape, cur.x, cur.y+1)){
+    cur.y++;
+  } else {
+    // lock piece
+    for(let r=0;r<cur.shape.length;r++){
+      for(let c=0;c<cur.shape[r].length;c++){
+        if(cur.shape[r][c]){
+          const x = cur.x + c, y = cur.y + r;
+          if(y >= 0) tetris.board[y][x] = 1;
+        }
       }
     }
-  });
-
-  // Mostrar panel después login
-  function showPanel() {
-    loginRegisterContainer.style.display = 'none';
-    panelContainer.style.display = 'flex';
-    showSection('lobby');
-    configUsernameSpan.textContent = loggedUser;
-    configPasswordSpan.textContent = '*'.repeat(users[loggedUser].length);
-    document.getElementById('welcome-message').textContent = `Bienvenido, ${loggedUser}!`;
-  }
-
-  // Cambiar secciones del menú
-  function showSection(section) {
-    [menuLobbyBtn, menuChatbotBtn, menuConfigBtn, menuSantoBtn].forEach(btn => btn.classList.remove('active'));
-    lobbySection.classList.remove('active');
-    chatbotSection.classList.remove('active');
-    configSection.classList.remove('active');
-    santoSection.classList.remove('active');
-
-    switch(section) {
-      case 'lobby':
-        menuLobbyBtn.classList.add('active');
-        lobbySection.classList.add('active');
-        break;
-      case 'chatbot':
-        menuChatbotBtn.classList.add('active');
-        chatbotSection.classList.add('active');
-        break;
-      case 'config':
-        menuConfigBtn.classList.add('active');
-        configSection.classList.add('active');
-        break;
-      case 'santo':
-        menuSantoBtn.classList.add('active');
-        santoSection.classList.add('active');
-        break;
+    clearLines();
+    tetris.current = tetris.next;
+    tetris.next = randomPiece();
+    if(!canMove(tetris.current.shape, tetris.current.x, tetris.current.y)){
+      // game over
+      tetris.running = false;
+      clearInterval(tetris.timer); tetris.timer = null;
+      alert('Fin del juego. Puntaje: ' + tetris.score);
     }
   }
-
-  menuLobbyBtn.addEventListener('click', () => showSection('lobby'));
-  menuChatbotBtn.addEventListener('click', () => showSection('chatbot'));
-  menuConfigBtn.addEventListener('click', () => showSection('config'));
-  menuSantoBtn.addEventListener('click', () => showSection('santo'));
-
-  // Chatbot simple
-  sendBtn.addEventListener('click', () => {
-    const msg = chatInput.value.trim();
-    if(!msg) return;
-    appendMessage('Tú', msg);
-    chatInput.value = '';
-    setTimeout(() => {
-      appendMessage('Fox', getBotResponse(msg));
-    }, 700);
-  });
-
-  chatInput.addEventListener('keydown', e => {
-    if(e.key === 'Enter') sendBtn.click();
-  });
-
-  function appendMessage(sender, text) {
-    const msgDiv = document.createElement('div');
-    msgDiv.style.marginBottom = '10px';
-    if(sender === 'Fox') {
-      msgDiv.classList.add('fox');
-    } else {
-      msgDiv.classList.add('sender');
+  drawBoard();
+}
+function clearLines(){
+  let lines = 0;
+  for(let y=tetris.gridH-1;y>=0;y--){
+    if(tetris.board[y].every(v=>v)){
+      tetris.board.splice(y,1);
+      tetris.board.unshift(Array(tetris.gridW).fill(0));
+      lines++;
+      y++; // recheck
     }
-    msgDiv.textContent = `${sender}: ${text}`;
-    chatWindow.appendChild(msgDiv);
-    chatWindow.scrollTop = chatWindow.scrollHeight;
   }
+  if(lines>0){
+    tetris.score += lines * 100;
+    notify('Has limpiado ' + lines + ' líneas (+' + (lines*100) + ' pts)');
+  }
+}
+function startTetris(){
+  if(!tetris.canvas) initTetris();
+  if(tetris.running) return;
+  tetris.running = true;
+  if(tetris.timer) clearInterval(tetris.timer);
+  tetris.timer = setInterval(tick, tetris.tick);
+}
+function pauseTetris(){ tetris.running = false; if(tetris.timer){ clearInterval(tetris.timer); tetris.timer = null; } }
+function resetTetris(){ pauseTetris(); resetBoard(); }
+function tetrisKey(e){
+  if(!tetris.running) return;
+  const cur = tetris.current;
+  if(!cur) return;
+  if(['ArrowLeft','a','A'].includes(e.key)){ if(canMove(cur.shape, cur.x-1, cur.y)) cur.x--; drawBoard(); }
+  if(['ArrowRight','d','D'].includes(e.key)){ if(canMove(cur.shape, cur.x+1, cur.y)) cur.x++; drawBoard(); }
+  if(['ArrowDown','s','S'].includes(e.key)){ if(canMove(cur.shape, cur.x, cur.y+1)) cur.y++; drawBoard(); }
+  if(['ArrowUp','w','W'].includes(e.key)){
+    // rotate
+    const rotated = rotate(cur.shape);
+    if(canMove(rotated, cur.x, cur.y)) cur.shape = rotated;
+    drawBoard();
+  }
+}
+function rotate(shape){
+  const H = shape.length, W = shape[0].length;
+  const out = Array.from({length:W}, ()=> Array(H).fill(0));
+  for(let r=0;r<H;r++) for(let c=0;c<W;c++) out[c][H-1-r] = shape[r][c];
+  return out;
+}
 
-  function getBotResponse(msg) {
-    msg = msg.toLowerCase();
-    if(msg.includes('hola')) return '¡Hola! ¿Cómo puedo ayudarte?';
-    if(msg.includes('adiós') || msg.includes('hasta luego')) return '¡Hasta luego! Que tengas un gran día.';
-    if(msg.includes('cómo estás')) return 'Estoy bien, gracias por preguntar.';
-    return "No entendí eso, intenta con otra cosa.";
-  }
+/* ---------------------------
+   Misc helpers + startup
+   --------------------------- */
+function renderClassFeed(){ renderClassFeedInternal(); }
+function renderClassFeedInternal(){ /* alias */ 
+  const classes = JSON.parse(localStorage.getItem('classes') || '[]');
+  const feed = el('classFeed'); feed.innerHTML = '';
+  classes.forEach(c=>{
+    const e = document.createElement('div'); e.className = 'class-item';
+    e.innerHTML = `<div><strong>${c.name}</strong><div class="small">owner: ${c.owner}</div></div><div><button onclick="openClassRoom('${c.name}')">Abrir</button></div>`;
+    feed.appendChild(e);
+  });
+}
+
+/* render accounts list for infoView */
+function renderAccountsList(){
+  const listEl = el('accountsList'); listEl.innerHTML = '';
+  const users = JSON.parse(localStorage.getItem('users')||'[]');
+  users.forEach(u=>{
+    const d = document.createElement('div'); d.className='tarjeton';
+    d.innerHTML = `<strong>${u.username}</strong><div class="small">Rol: ${u.role}</div><div class="small">Creado: ${u.created}</div>`;
+    listEl.appendChild(d);
+  });
+}
+
+/* initial render before login */
+(function init(){
+  renderProjectsGrid();
+  renderClassFeedInternal();
+  renderAccountsList();
+})();
 </script>
-
 </body>
 </html>
